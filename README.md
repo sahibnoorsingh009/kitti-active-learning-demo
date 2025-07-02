@@ -38,3 +38,51 @@ git clone https://github.com/sahibnoorsingh009/kitti-active-learning-demo.git
 cd kitti-active-learning-demo
 npm install
 npm start
+```
+Flowchart
+```mermaid
+flowchart TD
+    A[Unlabeled Dataset] --> B{Pre-trained Model?}
+    B -->|Yes| C[Load Pre-trained Model]
+    B -->|No| D[Bootstrap Labeled Set]
+    D --> E[Train Initial Model]
+    E --> F[Active Learning Loop]
+    C --> F
+    
+    F --> G[Inference on Unlabeled Data]
+    G --> H[Calculate Uncertainties]
+    
+    H --> H1[Classification Uncertainty<br/>Entropy: H = -Σ p*log p]
+    H --> H2[Localization Uncertainty<br/>Bbox Variance]
+    H --> H3[Confidence Uncertainty<br/>1 - max confidence]
+    
+    G --> I[Optional: Consistency Analysis]
+    I --> I1[Apply Augmentations]
+    I1 --> I2[Compare Predictions]
+    I2 --> I3[Calculate Inconsistency]
+    
+    H1 --> J[Combine Scores]
+    H2 --> J
+    H3 --> J
+    I3 --> K[Final Score = α×Uncertainty + β×Inconsistency]
+    J --> L{Include Consistency?}
+    L -->|Yes| K
+    L -->|No| M[Score = Uncertainty Only]
+    
+    K --> N[Select Top-K Samples]
+    M --> N
+    N --> O[Human Annotation]
+    O --> P[Update Dataset]
+    P --> Q[Retrain/Fine-tune Model]
+    
+    Q --> R{Stopping Criteria?}
+    R -->|Continue| F
+    R -->|Stop| S[Final Model]
+    
+    style A fill:#e1f5fe
+    style S fill:#c8e6c9
+    style O fill:#fff3e0
+    style Q fill:#f3e5f5
+```
+
+
